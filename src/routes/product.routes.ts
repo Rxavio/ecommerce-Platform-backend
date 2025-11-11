@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   createProduct,
   updateProduct,
+  getProducts,
 } from "../controllers/product.controller";
 import { validateRequest } from "../middleware/validate.middleware";
 import {
@@ -32,5 +33,8 @@ router.put(
   }),
   updateProduct,
 );
+
+// GET /products - Get all products with pagination and search
+router.get("/", getProducts);
 
 export default router;

@@ -7,6 +7,15 @@ import productRepository from "../repositories/product.repository";
 import { AppError } from "../utils/AppError";
 import { config } from "../config";
 
+interface GetProductsParams {
+  page?: number;
+  pageSize?: number;
+  search?: string;
+  category?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  inStock?: boolean;
+}
 class ProductService {
   async createProduct(
     userId: string,
@@ -38,6 +47,15 @@ class ProductService {
       success: true,
       message: "Product updated successfully",
       data: product,
+    };
+  }
+
+  async getProducts(params: GetProductsParams): Promise<ApiResponse> {
+    const result = await productRepository.findAll(params);
+    return {
+      success: true,
+      message: "Products retrieved successfully",
+      data: result,
     };
   }
 }
