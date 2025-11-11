@@ -1,4 +1,7 @@
-import { CreateProductInput } from "../schemas/product.schema";
+import {
+  CreateProductInput,
+  UpdateProductInput,
+} from "../schemas/product.schema";
 import { ApiResponse } from "../interfaces/response.interface";
 import productRepository from "../repositories/product.repository";
 import { AppError } from "../utils/AppError";
@@ -17,6 +20,23 @@ class ProductService {
     return {
       success: true,
       message: "Product created successfully",
+      data: product,
+    };
+  }
+
+  async updateProduct(
+    productId: string,
+    data: UpdateProductInput,
+  ): Promise<ApiResponse> {
+    // Check if product exists
+    const existingProduct = await productRepository.findById(productId);
+    if (!existingProduct) {
+      throw AppError.notFound("Product not found");
+    }
+    const product = await productRepository.update(productId, data);
+    return {
+      success: true,
+      message: "Product updated successfully",
       data: product,
     };
   }

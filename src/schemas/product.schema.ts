@@ -83,5 +83,5 @@ export const getProductsSchema = z.object({
 
 // Types inferred from schemas
 export type CreateProductInput = z.infer<typeof createProductSchema>;
-export type UpdateProductInput = z.infer<typeof updateProductSchema>;
+export type UpdateProductInput = z.infer<typeof updateProductSchema>["body"];
 export type GetProductsQuery = z.infer<typeof getProductsSchema>["query"];

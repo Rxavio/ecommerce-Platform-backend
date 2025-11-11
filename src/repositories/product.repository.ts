@@ -1,5 +1,8 @@
 import prisma from "../config/prisma";
-import { CreateProductInput } from "../schemas/product.schema";
+import {
+  CreateProductInput,
+  UpdateProductInput,
+} from "../schemas/product.schema";
 import { Product, Prisma } from "@prisma/client";
 
 class ProductRepository {
@@ -16,6 +19,19 @@ class ProductRepository {
           },
         },
       },
+    });
+  }
+
+  async findById(id: string): Promise<Product | null> {
+    return prisma.product.findUnique({
+      where: { id },
+    });
+  }
+
+  async update(id: string, data: UpdateProductInput): Promise<Product> {
+    return prisma.product.update({
+      where: { id },
+      data,
     });
   }
 }

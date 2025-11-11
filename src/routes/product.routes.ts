@@ -1,7 +1,13 @@
 import { Router } from "express";
-import { createProduct } from "../controllers/product.controller";
+import {
+  createProduct,
+  updateProduct,
+} from "../controllers/product.controller";
 import { validateRequest } from "../middleware/validate.middleware";
-import { createProductSchema } from "../schemas/product.schema";
+import {
+  createProductSchema,
+  updateProductSchema,
+} from "../schemas/product.schema";
 import { authenticateToken, isAdmin } from "../middleware/auth.middleware";
 
 const router = Router();
@@ -13,6 +19,18 @@ router.post(
   isAdmin,
   validateRequest({ body: createProductSchema }),
   createProduct,
+);
+
+// PUT /products/:id - Update an existing product (Admin only)
+router.put(
+  "/:id",
+  authenticateToken,
+  isAdmin,
+  validateRequest({
+    params: updateProductSchema.shape.params,
+    body: updateProductSchema.shape.body,
+  }),
+  updateProduct,
 );
 
 export default router;
