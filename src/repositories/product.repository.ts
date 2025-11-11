@@ -88,6 +88,12 @@ class ProductRepository {
       totalPages: Math.ceil(totalProducts / pageSize),
     };
   }
+
+  async delete(id: string): Promise<Product> {
+    return prisma.product.delete({
+      where: { id },
+    });
+  }
 }
 
 export default new ProductRepository();

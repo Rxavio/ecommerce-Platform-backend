@@ -86,3 +86,16 @@ export const getProductById = async (
     next(error);
   }
 };
+
+export const deleteProduct = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const result = await productService.deleteProduct(req.params.id);
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+};

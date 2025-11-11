@@ -4,6 +4,7 @@ import {
   updateProduct,
   getProducts,
   getProductById,
+  deleteProduct,
 } from "../controllers/product.controller";
 import { validateRequest } from "../middleware/validate.middleware";
 import {
@@ -34,6 +35,17 @@ router.put(
     body: updateProductSchema.shape.body,
   }),
   updateProduct,
+);
+
+// DELETE /products/:id - Delete a product (Admin only)
+router.delete(
+  "/:id",
+  authenticateToken,
+  isAdmin,
+  validateRequest({
+    params: z.object({ id: z.string().uuid() }),
+  }),
+  deleteProduct,
 );
 
 // GET /products - Get all products with pagination and search

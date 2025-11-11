@@ -70,6 +70,20 @@ class ProductService {
       data: product,
     };
   }
+
+  async deleteProduct(id: string): Promise<ApiResponse> {
+    // Check if product exists
+    const existingProduct = await productRepository.findById(id);
+    if (!existingProduct) {
+      throw AppError.notFound("Product not found");
+    }
+    const product = await productRepository.delete(id);
+    return {
+      success: true,
+      message: "Product deleted successfully",
+      data: product,
+    };
+  }
 }
 
 export default new ProductService();
