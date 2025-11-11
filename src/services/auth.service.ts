@@ -1,7 +1,7 @@
 import { RegisterDTO, LoginDTO } from "../interfaces/auth.interface";
 import { ApiResponse } from "../interfaces/response.interface";
 import userRepository from "../repositories/user.repository";
-import { hashPassword } from "../utils/hashPassword";
+import { hashPassword, comparePassword } from "../utils/hashPassword";
 import { generateAuthToken } from "../utils/generateAuthToken";
 import { AppError } from "../utils/AppError";
 import { User } from "@prisma/client";
@@ -37,6 +37,39 @@ class AuthService {
         user: this.excludePassword(user),
       },
     };
+  }
+
+  async login(data: LoginDTO): Promise<ApiResponse> {
+    try {
+      const user = await userRepository.findByEmail(data.email);
+
+      if (!user) {
+        throw AppError.unauthorized("Invalid credentials");
+      }
+
+      const isValidPassword = await comparePassword(
+        data.password,
+        user.password,
+      );
+      if (!isValidPassword) {
+        throw AppError.unauthorized("Invalid credentials");
+      }
+
+      const token = generateAuthToken(user);
+
+      return {
+        success: true,
+        message: "Login successful",
+        data: {
+          token,
+          user: this.excludePassword(user),
+        },
+      };
+    } catch (error) {
+      throw error instanceof Error
+        ? error
+        : new Error("Failed to authenticate user");
+    }
   }
 }
 

@@ -1,41 +1,44 @@
-import express, { Request, Response, NextFunction } from 'express';
-import cors from 'cors';
-import helmet from 'helmet';
-import morgan from 'morgan';
-import routes from './routes';
-import { config } from './config';
-import { errorHandler } from './middleware/error.middleware';
-import { logger } from './utils/logger';
+import express, { Request, Response, NextFunction } from "express";
+import cors from "cors";
+import helmet from "helmet";
+import morgan from "morgan";
+import routes from "./routes";
+import { config } from "./config";
+import { errorHandler } from "./middleware/error.middleware";
+import { logger } from "./utils/logger";
 
 // Initialize express app
 const app = express();
 
 // Security middleware
 app.use(helmet()); // Add security headers
-app.use(cors({
-  origin: config.nodeEnv === 'development' ? '*' : process.env.CORS_ORIGIN || '*',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+app.use(
+  cors({
+    origin:
+      config.nodeEnv === "development" ? "*" : process.env.CORS_ORIGIN || "*",
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  }),
+);
 
 // Request parsing middleware
 app.use(express.json());
 
 // Logging middleware
-app.use(morgan(config.nodeEnv === 'development' ? 'dev' : 'combined'));
+app.use(morgan(config.nodeEnv === "development" ? "dev" : "combined"));
 
 // Routes
-app.use('/api', routes);
+app.use("/api", routes);
 
 // Error handling middleware (must be after routes)
 app.use(errorHandler);
 
 // Basic health check route
-app.get('/health', (req: Request, res: Response) => {
-  res.json({ 
-    status: 'OK', 
+app.get("/health", (req: Request, res: Response) => {
+  res.json({
+    status: "OK",
     timestamp: new Date().toISOString(),
-    environment: config.nodeEnv
+    environment: config.nodeEnv,
   });
 });
 
@@ -43,24 +46,23 @@ app.get('/health', (req: Request, res: Response) => {
 const startServer = () => {
   try {
     const server = app.listen(config.port, () => {
-      logger.info('Server started', {
+      logger.info("Server started", {
         port: config.port,
         environment: config.nodeEnv,
-        healthCheck: `http://localhost:${config.port}/health`
+        healthCheck: `http://localhost:${config.port}/health`,
       });
     });
 
     // Handle shutdown gracefully
-    process.on('SIGTERM', () => {
-      logger.info('SIGTERM signal received: closing HTTP server');
+    process.on("SIGTERM", () => {
+      logger.info("SIGTERM signal received: closing HTTP server");
       server.close(() => {
-        logger.info('HTTP server closed');
+        logger.info("HTTP server closed");
         process.exit(0);
       });
     });
-
   } catch (error) {
-    logger.error('Error starting server:', error);
+    logger.error("Error starting server:", error);
     process.exit(1);
   }
 };
