@@ -1,9 +1,8 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 export const OrderItemSchema = z.object({
-    productId: z.string().uuid(),
-    quantity: z.number().int().positive()
-    
+  productId: z.string().uuid(),
+  quantity: z.number().int().positive(),
 });
 
 export const CreateOrderSchema = z.array(OrderItemSchema);
