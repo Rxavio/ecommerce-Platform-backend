@@ -40,7 +40,6 @@ model Product {
 model Order {
   id          String         @id @default(uuid())
   userId      String
-  description String?
   totalPrice  Float
   status      String         @default("Pending")
   user        User           @relation(fields: [userId], references: [id])
