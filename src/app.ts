@@ -30,6 +30,14 @@ app.use(morgan(config.nodeEnv === "development" ? "dev" : "combined"));
 // Routes
 app.use("/api", routes);
 
+// Return a custom 404 for unknown API routes, runs for unmatched /api requests.
+app.use("/api", (req: Request, res: Response) => {
+  res.status(404).json({
+    success: false,
+    message: `Cannot ${req.method} ${req.originalUrl}`,
+  });
+});
+
 // Error handling middleware (must be after routes)
 app.use(errorHandler);
 
