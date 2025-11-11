@@ -15,4 +15,8 @@ export const config = {
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     credentials: process.env.CORS_CREDENTIALS === "true",
   },
+  cache: {
+    // cache TTL for product listings in seconds
+    ttlSeconds: Number(process.env.CACHE_TTL ?? "60"),
+  },
 } as const;

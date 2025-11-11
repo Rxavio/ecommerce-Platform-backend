@@ -6,6 +6,7 @@ import { ApiResponse } from "../interfaces/response.interface";
 import productRepository from "../repositories/product.repository";
 import { AppError } from "../utils/AppError";
 import { config } from "../config";
+import cache from "../utils/cache";
 
 interface GetProductsParams {
   page?: number;
@@ -25,6 +26,8 @@ class ProductService {
       ...data,
       userId,
     });
+    // Invalidate product listing cache on create
+    cache.delPrefix("products:");
 
     return {
       success: true,
@@ -43,6 +46,8 @@ class ProductService {
       throw AppError.notFound("Product not found");
     }
     const product = await productRepository.update(productId, data);
+    // Invalidate product listing cache on update
+    cache.delPrefix("products:");
     return {
       success: true,
       message: "Product updated successfully",
@@ -51,7 +56,19 @@ class ProductService {
   }
 
   async getProducts(params: GetProductsParams): Promise<ApiResponse> {
+    // Build a cache key from params
+    const key = `products:${JSON.stringify(params ?? {})}`;
+    const cached = cache.get(key);
+    if (cached) {
+      return {
+        success: true,
+        message: "Products retrieved successfully (from cache)",
+        data: cached,
+      };
+    }
     const result = await productRepository.findAll(params);
+    // Cache the result for configured TTL (seconds)
+    cache.set(key, result, config.cache.ttlSeconds);
     return {
       success: true,
       message: "Products retrieved successfully",
@@ -78,6 +95,8 @@ class ProductService {
       throw AppError.notFound("Product not found");
     }
     const product = await productRepository.delete(id);
+    // Invalidate product listing cache on delete
+    cache.delPrefix("products:");
     return {
       success: true,
       message: "Product deleted successfully",
