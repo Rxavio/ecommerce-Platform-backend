@@ -33,6 +33,7 @@ model Product {
   userId      String
   user        User      @relation(fields: [userId], references: [id])
   orders      OrderProduct[]
+  imageUrls   String[]  @default([])
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now()) @updatedAt
 }

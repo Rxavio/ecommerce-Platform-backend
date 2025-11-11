@@ -13,6 +13,7 @@ import {
 } from "../schemas/product.schema";
 import { z } from "zod";
 import { authenticateToken, isAdmin } from "../middleware/auth.middleware";
+import { productImageUpload } from "../middleware/upload.middleware";
 
 const router = Router();
 
@@ -21,6 +22,7 @@ router.post(
   "/",
   authenticateToken,
   isAdmin,
+  productImageUpload,
   validateRequest({ body: createProductSchema }),
   createProduct,
 );
@@ -30,6 +32,7 @@ router.put(
   "/:id",
   authenticateToken,
   isAdmin,
+  productImageUpload,
   validateRequest({
     params: updateProductSchema.shape.params,
     body: updateProductSchema.shape.body,

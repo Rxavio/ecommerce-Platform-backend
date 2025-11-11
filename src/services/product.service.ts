@@ -20,7 +20,7 @@ interface GetProductsParams {
 class ProductService {
   async createProduct(
     userId: string,
-    data: CreateProductInput,
+    data: CreateProductInput & { imageUrls?: string[] },
   ): Promise<ApiResponse> {
     const product = await productRepository.create({
       ...data,
@@ -38,7 +38,7 @@ class ProductService {
 
   async updateProduct(
     productId: string,
-    data: UpdateProductInput,
+    data: UpdateProductInput & { imageUrls?: string[] },
   ): Promise<ApiResponse> {
     // Check if product exists
     const existingProduct = await productRepository.findById(productId);

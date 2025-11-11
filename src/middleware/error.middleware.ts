@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { AppError } from "../utils/AppError";
+import multer from "multer";
 import { ZodError } from "zod";
 import { config } from "../config";
 import { logger } from "../utils/logger";
@@ -32,6 +33,18 @@ export const errorHandler = (
         field: issue.path.join("."),
         message: issue.message,
       })),
+    });
+  }
+
+  // Handle Multer (file upload) errors
+  if (err instanceof multer.MulterError) {
+    // Known multer error codes: 'LIMIT_FILE_SIZE', 'LIMIT_UNEXPECTED_FILE', etc.
+    const message =
+      err.code === "LIMIT_FILE_SIZE" ? "File too large" : err.message;
+    return res.status(400).json({
+      success: false,
+      message,
+      error: err.code,
     });
   }
 
