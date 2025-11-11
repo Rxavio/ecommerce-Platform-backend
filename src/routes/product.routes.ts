@@ -3,12 +3,14 @@ import {
   createProduct,
   updateProduct,
   getProducts,
+  getProductById,
 } from "../controllers/product.controller";
 import { validateRequest } from "../middleware/validate.middleware";
 import {
   createProductSchema,
   updateProductSchema,
 } from "../schemas/product.schema";
+import { z } from "zod";
 import { authenticateToken, isAdmin } from "../middleware/auth.middleware";
 
 const router = Router();
@@ -36,5 +38,14 @@ router.put(
 
 // GET /products - Get all products with pagination and search
 router.get("/", getProducts);
+
+// GET /products/:id - Get product by ID
+router.get(
+  "/:id",
+  validateRequest({
+    params: z.object({ id: z.string().uuid() }),
+  }),
+  getProductById,
+);
 
 export default router;

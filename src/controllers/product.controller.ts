@@ -12,8 +12,6 @@ const parsePaginationParams = (query: GetProductsQuery) => {
   const category = query.category?.toString();
   const minPrice = query.minPrice ? Number(query.minPrice) : undefined;
   const maxPrice = query.maxPrice ? Number(query.maxPrice) : undefined;
-  const sortBy = query.sortBy as "price" | "name" | "createdAt" | undefined;
-  const order = query.order as "asc" | "desc" | undefined;
 
   return {
     page,
@@ -22,8 +20,6 @@ const parsePaginationParams = (query: GetProductsQuery) => {
     category,
     minPrice,
     maxPrice,
-    sortBy,
-    order,
   };
 };
 
@@ -71,6 +67,20 @@ export const getProducts = async (
   try {
     const params = parsePaginationParams(req.query);
     const result = await productService.getProducts(params as any);
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Get a single product
+export const getProductById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const result = await productService.getProductById(req.params.id);
     res.status(200).json(result);
   } catch (error) {
     next(error);

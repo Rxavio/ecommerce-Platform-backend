@@ -58,6 +58,18 @@ class ProductService {
       data: result,
     };
   }
+
+  async getProductById(id: string): Promise<ApiResponse> {
+    const product = await productRepository.findById(id);
+    if (!product) {
+      throw AppError.notFound("Product not found");
+    }
+    return {
+      success: true,
+      message: "Product retrieved successfully",
+      data: product,
+    };
+  }
 }
 
 export default new ProductService();
