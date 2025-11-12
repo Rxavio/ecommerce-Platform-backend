@@ -41,7 +41,7 @@ A modern REST API for an e-commerce platform built with Express.js, TypeScript, 
    CLOUDINARY_SECRET="cloudinary-secret"
 
    # Server
-   PORT=3000
+   PORT=3000  # Default port is 3000
    NODE_ENV="development"
    ```
 
@@ -55,13 +55,13 @@ A modern REST API for an e-commerce platform built with Express.js, TypeScript, 
    npm run dev
    ```
 
-   The API will be available at `http://localhost:5000`
+   The API will be available at `http://localhost:3000`
 
 ## 📖 API Documentation
 
 Once the server is running, visit:
 ```
-http://localhost:5000/api-docs
+http://localhost:3000/api-docs
 ```
 
 This opens the **Swagger UI** with interactive API documentation where you can:
@@ -191,7 +191,7 @@ src/
 │   ├── hashpassword.ts             # Password hashing
 │   └── logger.ts                   # Winston logger setup
 ├── app.ts                          # Express app setup, Main entry point
-├── tests/                        # Test cases only for now
+├── tests/                        
 ```
 
 ## API Endpoints
@@ -241,6 +241,6 @@ test(orders): add edge case tests
 
 ## 📄 License
 
-This project is private/internal use only.
+A2SV Technical Interview
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines and commit message conventions.
