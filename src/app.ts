@@ -4,6 +4,7 @@ import helmet from "helmet";
 import morgan from "morgan";
 import routes from "./routes";
 import { config } from "./config";
+import { setupSwagger } from "./config/swagger";
 import { errorHandler } from "./middleware/error.middleware";
 import { logger } from "./utils/logger";
 
@@ -27,12 +28,15 @@ app.use(express.json());
 // Logging middleware
 app.use(morgan(config.nodeEnv === "development" ? "dev" : "combined"));
 
+// Setup Swagger documentation
+setupSwagger(app);
+
 // Routes
 app.use("/api", routes);
 
-// Return a custom 404 for unknown API routes, runs for unmatched /api requests.
-app.use("/api", (req: Request, res: Response) => {
-  res.status(404).json({
+// Return a custom 404 for unknown API routes
+app.use("/api", (req: Request, res: Response, next: NextFunction) => {
+  return res.status(404).json({
     success: false,
     message: `Cannot ${req.method} ${req.originalUrl}`,
   });
@@ -47,6 +51,7 @@ app.get("/health", (req: Request, res: Response) => {
     status: "OK",
     timestamp: new Date().toISOString(),
     environment: config.nodeEnv,
+    docs: "http://localhost:" + config.port + "/api-docs",
   });
 });
 
@@ -58,6 +63,7 @@ const startServer = () => {
         port: config.port,
         environment: config.nodeEnv,
         healthCheck: `http://localhost:${config.port}/health`,
+        apiDocs: `http://localhost:${config.port}/api-docs`,
       });
     });
 
